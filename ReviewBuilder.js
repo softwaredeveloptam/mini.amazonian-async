@@ -21,6 +21,9 @@ class ReviewBuilder {
           products = JSON.parse(products);
           reviews = JSON.parse(reviews);
           users = JSON.parse(users);
+          // console.log(products);
+          // console.log(reviews);
+          // console.log(users);
           cb(produceResult({ products, reviews, users }));
         });
       });
@@ -28,12 +31,43 @@ class ReviewBuilder {
   }
 
   buildReviewsPromises() {
-    // FIXME
+    return Promise.all([
+      readFile("./data/products.json"),
+      readFile("./data/reviews.json"),
+      readFile("./data/users.json"),
+    ])
+      .then((array) => {
+        const arrayHolder = [];
+
+        array.forEach((objItem) => {
+          arrayHolder.push(JSON.parse(objItem));
+        });
+
+        const objHolder = {};
+        objHolder.products = arrayHolder[0]; // products
+        objHolder.reviews = arrayHolder[1]; // reviews
+        objHolder.users = arrayHolder[2]; // users
+
+        return produceResult(objHolder);
+      })
+      .catch((err) => {
+        throw err;
+      });
   }
 
   async buildReviewsAsyncAwait() {
-    // FIXME
+    // FIXME // await
+    let data = await Promise.all([
+      readFile("./data/products.json"),
+      readFile("./data/reviews.json"),
+      readFile("./data/users.json"),
+    ]);
+    produceResult(data); // careful of data type
+
+    // return produceResult(data);
+    // console.log(data);
   }
+  // buildReviewsAsyncAwait()
 }
 
 module.exports = ReviewBuilder;
